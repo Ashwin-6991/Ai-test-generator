@@ -1,15 +1,36 @@
-const req = {
-    feature:"login",
-    descriptiom:"A user should be able to login using email and pwd"
-    ,priority:"high"
-}
-const prompt = `
-You are a QA tester with 2 years of experience
-generate test cases for the following features:
+import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
 
-feature :${req.feature}
-description :${req.descriptiom}
-priority :${req.priority}
+console.log("starting Gemini");
+
+async function main() {
+    console.log("Calling Gemini...");
+
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY
+    });
+
+    const response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: `
+You are a QA tester.
+
+Generate 3 test cases for a login page.
+
+For each test case include:
+- title
+- scenario
+- steps
+- expectedResult
+
+Return the test cases as JSON.
 `
+    });
 
-console.log(prompt)
+    console.log("Gemini responded!");
+    console.log(response.text);
+}
+
+main().catch(error => {
+    console.error("ERROR:", error);
+});
